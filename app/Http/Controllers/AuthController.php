@@ -8,7 +8,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 
 /**
- * AuthController — versi FIXED ✅
+ * AuthController — versi FIXED 
  *
  * Perbaikan dari kode Yoga:
  * 1. Login: Menggunakan Auth::attempt() untuk verifikasi email + password.
@@ -40,7 +40,7 @@ class AuthController extends Controller
             'role'     => 'user',
         ]);
 
-        // ✅ Buat token Sanctum untuk autentikasi selanjutnya
+        // Buat token Sanctum untuk autentikasi selanjutnya
         $token = $user->createToken('auth-token')->plainTextToken;
 
         return response()->json([
@@ -53,7 +53,7 @@ class AuthController extends Controller
     /**
      * Login user.
      *
-     * ✅ FIX #1: Menggunakan Auth::attempt() yang memverifikasi
+     * FIX #1: Menggunakan Auth::attempt() yang memverifikasi
      *    email DAN password secara bersamaan.
      *
      *    Kode Yoga: hanya cari User::where('email', ...) lalu langsung
@@ -69,7 +69,7 @@ class AuthController extends Controller
             'password' => 'required|string',
         ]);
 
-        // ✅ Auth::attempt() melakukan 3 hal sekaligus:
+        // Auth::attempt() melakukan 3 hal sekaligus:
         //    1. Cari user berdasarkan email
         //    2. Hash password input lalu bandingkan dengan hash di DB
         //    3. Return false kalau email tidak ada ATAU password salah
@@ -81,7 +81,7 @@ class AuthController extends Controller
 
         $user = Auth::user();
 
-        // ✅ Buat token Sanctum untuk request selanjutnya
+        // Buat token Sanctum untuk request selanjutnya
         $token = $user->createToken('auth-token')->plainTextToken;
 
         return response()->json([
@@ -94,7 +94,7 @@ class AuthController extends Controller
     /**
      * Logout — hapus token yang sedang aktif.
      *
-     * ✅ Kode Yoga: cuma return string, tidak ada proses apapun.
+     * Kode Yoga: cuma return string, tidak ada proses apapun.
      *    Kode Fix:  hapus Sanctum token supaya tidak bisa dipakai lagi.
      */
     public function logout(Request $request)

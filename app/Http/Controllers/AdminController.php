@@ -8,7 +8,7 @@ use App\Models\Product;
 use Illuminate\Http\Request;
 
 /**
- * AdminController — versi FIXED ✅
+ * AdminController — versi FIXED 
  *
  * Perbaikan dari kode Yoga:
  * - Controller ini sekarang HANYA bisa diakses melalui route yang
@@ -21,7 +21,7 @@ class AdminController extends Controller
     /**
      * Lihat semua users.
      *
-     * ✅ Aman karena middleware auth:sanctum + is_admin sudah
+     *    Aman karena middleware auth:sanctum + is_admin sudah
      *    memastikan hanya admin yang bisa akses.
      *    Password tidak tampil karena sudah di-$hidden di model.
      */
@@ -38,7 +38,7 @@ class AdminController extends Controller
     /**
      * Lihat detail user tertentu.
      *
-     * ✅ Tidak ada IDOR karena hanya admin yang bisa akses endpoint ini.
+     * Tidak ada IDOR karena hanya admin yang bisa akses endpoint ini.
      */
     public function showUser($id)
     {
@@ -57,7 +57,7 @@ class AdminController extends Controller
     /**
      * Hapus user.
      *
-     * ✅ Hanya admin yang bisa menghapus user.
+     * Hanya admin yang bisa menghapus user.
      */
     public function deleteUser($id)
     {
@@ -77,7 +77,7 @@ class AdminController extends Controller
     /**
      * Lihat semua orders.
      *
-     * ✅ Dilindungi middleware.
+     * Dilindungi middleware.
      */
     public function listOrders()
     {
@@ -105,7 +105,7 @@ class AdminController extends Controller
     /**
      * Tambah produk baru.
      *
-     * ✅ Hanya admin yang bisa menambah produk.
+     * Hanya admin yang bisa menambah produk.
      */
     public function storeProduct(Request $request)
     {
@@ -127,7 +127,7 @@ class AdminController extends Controller
     /**
      * Hapus produk.
      *
-     * ✅ Hanya admin yang bisa menghapus produk.
+     * Hanya admin yang bisa menghapus produk.
      */
     public function deleteProduct($id)
     {

@@ -8,7 +8,7 @@ use Illuminate\Notifications\Notifiable;
 use Laravel\Sanctum\HasApiTokens;
 
 /**
- * Model User — versi FIXED ✅
+ * Model User — versi FIXED 
  *
  * Perbaikan dari kode Yoga:
  * 1. Menambahkan HasApiTokens untuk autentikasi token via Sanctum.
@@ -28,7 +28,7 @@ class User extends Authenticatable
     ];
 
     /**
-     * ✅ FIX #3: Password di-hidden dari JSON response.
+     *  FIX #3: Password di-hidden dari JSON response.
      *    Yoga lupa memasukkan 'password' ke sini,
      *    sehingga password ikut tampil di response API.
      */
@@ -38,7 +38,7 @@ class User extends Authenticatable
     ];
 
     /**
-     * ✅ FIX #3: Cast 'hashed' membuat password otomatis di-hash
+     *  FIX #3: Cast 'hashed' membuat password otomatis di-hash
      *    menggunakan bcrypt setiap kali password di-set.
      *    Yoga tidak punya casts() ini sama sekali.
      *
