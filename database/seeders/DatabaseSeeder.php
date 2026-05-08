@@ -12,40 +12,41 @@ class DatabaseSeeder extends Seeder
     /**
      * Seed the application's database.
      *
-     * BUG #3 terlihat jelas di sini:
-     * Password disimpan sebagai PLAIN TEXT ke database.
-     * Siapapun yang punya akses ke database bisa baca password semua user.
+     * ✅ FIX #3: Password sekarang otomatis di-hash oleh cast 'hashed'
+     *    di model User. Meskipun kita tulis string plain di sini,
+     *    saat User::create() dipanggil, Laravel akan otomatis
+     *    bcrypt password sebelum menyimpan ke database.
      */
     public function run(): void
     {
         // ==========================================
-        // USERS — password disimpan PLAIN TEXT!
+        // USERS — password otomatis di-hash oleh model cast ✅
         // ==========================================
         $admin = User::create([
             'name'     => 'Admin TokoHebat',
             'email'    => 'admin@tokohebat.com',
-            'password' => 'admin123',       // ❌ PLAIN TEXT!
+            'password' => 'admin123',       // ✅ otomatis di-hash oleh cast 'hashed'
             'role'     => 'admin',
         ]);
 
         $budi = User::create([
             'name'     => 'Budi Santoso',
             'email'    => 'budi@gmail.com',
-            'password' => 'budi1234',       // ❌ PLAIN TEXT!
+            'password' => 'budi1234',       // ✅ otomatis di-hash
             'role'     => 'user',
         ]);
 
         $siti = User::create([
             'name'     => 'Siti Rahayu',
             'email'    => 'siti@gmail.com',
-            'password' => 'sitiaman99',     // ❌ PLAIN TEXT!
+            'password' => 'sitiaman99',     // ✅ otomatis di-hash
             'role'     => 'user',
         ]);
 
         $andi = User::create([
             'name'     => 'Andi Pratama',
             'email'    => 'andi@gmail.com',
-            'password' => 'andi5678',       // ❌ PLAIN TEXT!
+            'password' => 'andi5678',       // ✅ otomatis di-hash
             'role'     => 'user',
         ]);
 

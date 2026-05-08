@@ -3,46 +3,55 @@
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\AdminController;
 use App\Http\Controllers\OrderController;
+use App\Http\Middleware\IsAdmin;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
 /*
 |--------------------------------------------------------------------------
-| API Routes — versi Yoga (VULNERABLE)
+| API Routes — versi FIXED ✅
 |--------------------------------------------------------------------------
 |
-| BUG #2: Route admin TIDAK dilindungi middleware auth maupun
-|         pengecekan role. Siapapun bisa akses endpoint admin
-|         tanpa login, cukup tahu URL-nya.
+| Perbaikan dari kode Yoga:
+| - Route auth (register/login) tetap public.
+| - Route logout dilindungi auth:sanctum (harus login dulu).
+| - Route admin dilindungi auth:sanctum + IsAdmin middleware.
+| - Route user orders dilindungi auth:sanctum.
 |
 */
 
 // ============================
-// AUTH (tanpa proteksi apapun)
+// AUTH — public routes
 // ============================
 Route::post('/register', [AuthController::class, 'register']);
 Route::post('/login',    [AuthController::class, 'login']);
-Route::post('/logout',   [AuthController::class, 'logout']);
 
 // ============================
-// ADMIN — ❌ TANPA MIDDLEWARE!
+// PROTECTED — harus login
 // ============================
-// Seharusnya dilindungi auth + role check, tapi Yoga lupa.
-// User biasa (bahkan tanpa login!) bisa akses semua endpoint ini.
-Route::prefix('admin')->group(function () {
-    Route::get('/users',          [AdminController::class, 'listUsers']);
-    Route::get('/users/{id}',     [AdminController::class, 'showUser']);
-    Route::delete('/users/{id}',  [AdminController::class, 'deleteUser']);
+Route::middleware('auth:sanctum')->group(function () {
 
-    Route::get('/orders',         [AdminController::class, 'listOrders']);
+    // Logout — butuh token valid
+    Route::post('/logout', [AuthController::class, 'logout']);
 
-    Route::get('/products',       [AdminController::class, 'listProducts']);
-    Route::post('/products',      [AdminController::class, 'storeProduct']);
-    Route::delete('/products/{id}', [AdminController::class, 'deleteProduct']);
+    // User Orders — hanya bisa lihat/buat order sendiri
+    Route::get('/orders',  [OrderController::class, 'index']);
+    Route::post('/orders', [OrderController::class, 'store']);
+
+    // ============================
+    // ADMIN — ✅ auth:sanctum + IsAdmin
+    // ============================
+    // Harus login DAN harus punya role 'admin'.
+    // User biasa akan mendapat 403 Forbidden.
+    Route::prefix('admin')->middleware(IsAdmin::class)->group(function () {
+        Route::get('/users',            [AdminController::class, 'listUsers']);
+        Route::get('/users/{id}',       [AdminController::class, 'showUser']);
+        Route::delete('/users/{id}',    [AdminController::class, 'deleteUser']);
+
+        Route::get('/orders',           [AdminController::class, 'listOrders']);
+
+        Route::get('/products',         [AdminController::class, 'listProducts']);
+        Route::post('/products',        [AdminController::class, 'storeProduct']);
+        Route::delete('/products/{id}', [AdminController::class, 'deleteProduct']);
+    });
 });
-
-// ============================
-// USER ORDERS
-// ============================
-Route::get('/orders',  [OrderController::class, 'index']);
-Route::post('/orders', [OrderController::class, 'store']);

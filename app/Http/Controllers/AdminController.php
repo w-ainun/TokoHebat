@@ -8,21 +8,22 @@ use App\Models\Product;
 use Illuminate\Http\Request;
 
 /**
- * AdminController — versi Yoga (VULNERABLE)
+ * AdminController — versi FIXED ✅
  *
- * BUG #2 (IDOR / Broken Access Control):
- *   - Semua endpoint admin bisa diakses SIAPAPUN.
- *   - Tidak ada middleware auth.
- *   - Tidak ada pengecekan role user.
- *   - User biasa bisa akses /api/admin/users/1, /api/admin/users/2, dst.
- *     hanya dengan mengganti angka di URL.
+ * Perbaikan dari kode Yoga:
+ * - Controller ini sekarang HANYA bisa diakses melalui route yang
+ *   dilindungi middleware 'auth:sanctum' + 'is_admin'.
+ * - Tidak perlu cek role di setiap method karena middleware sudah handle.
+ * - Password tidak bocor karena $hidden di model sudah diset.
  */
 class AdminController extends Controller
 {
     /**
-     * Lihat semua users — tanpa cek apakah yang request adalah admin.
+     * Lihat semua users.
      *
-     * ❌ Siapapun bisa lihat data semua user (termasuk password plain text!)
+     * ✅ Aman karena middleware auth:sanctum + is_admin sudah
+     *    memastikan hanya admin yang bisa akses.
+     *    Password tidak tampil karena sudah di-$hidden di model.
      */
     public function listUsers()
     {
@@ -35,10 +36,9 @@ class AdminController extends Controller
     }
 
     /**
-     * Lihat detail user tertentu — IDOR vulnerability.
+     * Lihat detail user tertentu.
      *
-     * ❌ Cukup ganti {id} di URL untuk lihat data user manapun.
-     *    Tidak ada pengecekan siapa yang sedang login.
+     * ✅ Tidak ada IDOR karena hanya admin yang bisa akses endpoint ini.
      */
     public function showUser($id)
     {
@@ -48,7 +48,6 @@ class AdminController extends Controller
             return response()->json(['message' => 'User tidak ditemukan'], 404);
         }
 
-        // Bahkan menampilkan password karena tidak di-hidden di model!
         return response()->json([
             'message' => 'Detail user',
             'data'    => $user,
@@ -56,9 +55,9 @@ class AdminController extends Controller
     }
 
     /**
-     * Hapus user — tanpa cek otorisasi.
+     * Hapus user.
      *
-     * ❌ User biasa bisa menghapus user lain!
+     * ✅ Hanya admin yang bisa menghapus user.
      */
     public function deleteUser($id)
     {
@@ -78,7 +77,7 @@ class AdminController extends Controller
     /**
      * Lihat semua orders.
      *
-     * ❌ Tidak ada autentikasi/otorisasi.
+     * ✅ Dilindungi middleware.
      */
     public function listOrders()
     {
@@ -104,9 +103,9 @@ class AdminController extends Controller
     }
 
     /**
-     * Tambah produk baru — tanpa cek admin.
+     * Tambah produk baru.
      *
-     * ❌ User biasa bisa menambah produk!
+     * ✅ Hanya admin yang bisa menambah produk.
      */
     public function storeProduct(Request $request)
     {
@@ -126,7 +125,9 @@ class AdminController extends Controller
     }
 
     /**
-     * Hapus produk — tanpa cek admin.
+     * Hapus produk.
+     *
+     * ✅ Hanya admin yang bisa menghapus produk.
      */
     public function deleteProduct($id)
     {
